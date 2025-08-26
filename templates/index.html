@@ -1,5 +1,3 @@
-
-
 <!-- templates/index.html -->
 <!-- This file defines the structure and layout of the calculator interface. -->
 
@@ -15,7 +13,15 @@
 </head>
 <body>
     <div class="calculator-wrapper">
-        <h1>Calculator</h1>
+        <div class="header">
+            <h1>Calculator</h1>
+            <!-- Dark/Light Mode Toggle Switch -->
+            <div class="theme-switcher">
+                <input type="checkbox" id="theme-toggle">
+                <label for="theme-toggle" class="slider"></label>
+            </div>
+        </div>
+        
         <!-- The form posts the expression to our Flask backend -->
         <form action="/" method="post" name="calculator">
             <div class="display-container">
@@ -60,7 +66,7 @@
         </form>
     </div>
 
-    <!-- JavaScript for button functionality -->
+    <!-- JavaScript for button and theme functionality -->
     <script>
         // Appends the clicked button's value to the display
         function appendToDisplay(value) {
@@ -77,6 +83,39 @@
             document.forms['calculator']['display'].value = '';
             document.getElementById('expression-display').innerText = '';
         }
+
+        // --- Theme Switcher Logic ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Function to apply the theme
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        }
+
+        // Event listener for the toggle switch
+        themeToggle.addEventListener('change', () => {
+            const isChecked = themeToggle.checked;
+            if (isChecked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+
+        // On page load, check for saved theme in localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
+            applyTheme(savedTheme);
+        });
     </script>
 </body>
 </html>

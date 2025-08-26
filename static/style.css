@@ -1,5 +1,47 @@
 /* static/style.css */
-/* This file contains all the styles for the calculator's appearance. */
+/* This file contains all the styles for the calculator's appearance,
+   including variables for light and dark modes. */
+
+/* --- Color Variables --- */
+:root {
+    /* Light Mode (Default) */
+    --bg-color: #f0f2f5;
+    --wrapper-bg: #ffffff;
+    --text-color: #333;
+    --display-bg: #f8f9fa;
+    --display-border: #e9ecef;
+    --display-text-main: #212529;
+    --display-text-sub: #6c757d;
+    --btn-bg: #e9ecef;
+    --btn-text: #343a40;
+    --btn-hover-bg: #dee2e6;
+    --operator-bg: #f8f9fa;
+    --operator-text: #007bff;
+    --operator-hover-bg: #e2e6ea;
+    --equals-bg: #007bff;
+    --equals-hover-bg: #0056b3;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+    /* Dark Mode */
+    --bg-color: #121212;
+    --wrapper-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --display-bg: #2a2a2a;
+    --display-border: #3a3a3a;
+    --display-text-main: #ffffff;
+    --display-text-sub: #a0a0a0;
+    --btn-bg: #3a3a3a;
+    --btn-text: #e0e0e0;
+    --btn-hover-bg: #4a4a4a;
+    --operator-bg: #2a2a2a;
+    --operator-text: #3391ff;
+    --operator-hover-bg: #3a3a3a;
+    --equals-bg: #3391ff;
+    --equals-hover-bg: #1c75e0;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+}
 
 /* Basic body styling */
 body {
@@ -7,47 +49,98 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f2f5; /* Light gray background */
+    background-color: var(--bg-color);
     font-family: 'Inter', sans-serif;
     margin: 0;
+    transition: background-color 0.3s ease;
 }
 
-/* Wrapper for the entire calculator to center it and add a shadow */
+/* Wrapper for the entire calculator */
 .calculator-wrapper {
     width: 100%;
     max-width: 380px;
-    background-color: #ffffff;
+    background-color: var(--wrapper-bg);
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px var(--shadow-color);
     padding: 30px;
     box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
 }
 
 h1 {
-    text-align: center;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 25px;
+    color: var(--text-color);
+    margin: 0;
     font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+/* --- Theme Switcher Styles --- */
+.theme-switcher {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.theme-switcher input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #007bff;
+}
+input:checked + .slider:before {
+    transform: translateX(22px);
 }
 
 /* Container for the display screens */
 .display-container {
-    background-color: #f8f9fa;
+    background-color: var(--display-bg);
     border-radius: 12px;
     padding: 15px;
     margin-bottom: 20px;
     text-align: right;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--display-border);
+    transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 /* Small display for the full expression */
 #expression-display {
     min-height: 24px;
     font-size: 16px;
-    color: #6c757d; /* Muted gray color */
+    color: var(--display-text-sub);
     margin-bottom: 5px;
     word-wrap: break-word;
+    transition: color 0.3s ease;
 }
 
 /* Main display for input and result */
@@ -58,17 +151,18 @@ h1 {
     font-size: 48px;
     font-weight: 500;
     text-align: right;
-    color: #212529;
+    color: var(--display-text-main);
     padding: 0;
     box-sizing: border-box;
-    outline: none; /* Removes the focus outline */
+    outline: none;
+    transition: color 0.3s ease;
 }
 
 /* Grid layout for all buttons */
 .buttons-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px; /* Space between buttons */
+    gap: 15px;
 }
 
 /* General styling for all buttons */
@@ -80,12 +174,12 @@ h1 {
     height: 65px;
     cursor: pointer;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    background-color: #e9ecef;
-    color: #343a40;
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
 }
 
 .button:hover {
-    background-color: #dee2e6;
+    background-color: var(--btn-hover-bg);
 }
 
 .button:active {
@@ -95,21 +189,21 @@ h1 {
 
 /* Specific styling for operator buttons */
 .button.operator {
-    background-color: #f8f9fa;
-    color: #007bff;
+    background-color: var(--operator-bg);
+    color: var(--operator-text);
 }
 
 .button.operator:hover {
-    background-color: #e2e6ea;
+    background-color: var(--operator-hover-bg);
 }
 
 /* Specific styling for the equals button */
 .button.equals {
-    grid-column: span 2; /* Makes the equals button wider */
-    background-color: #007bff; /* Blue background */
-    color: #ffffff; /* White text */
+    grid-column: span 2;
+    background-color: var(--equals-bg);
+    color: #ffffff;
 }
 
 .button.equals:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: var(--equals-hover-bg);
 }
