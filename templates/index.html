@@ -1,15 +1,82 @@
 
 
+<!-- templates/index.html -->
+<!-- This file defines the structure and layout of the calculator interface. -->
 
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-g">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Calculator</title>
+    <!-- Link to the external CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="calculator-wrapper">
+        <h1>Calculator</h1>
+        <!-- The form posts the expression to our Flask backend -->
+        <form action="/" method="post" name="calculator">
+            <div class="display-container">
+                <!-- Shows the current expression -->
+                <div id="expression-display">{{ expression or '' }}</div>
+                <!-- The main display for input and results -->
+                <input type="text" name="display" id="display" value="{{ result or error or '' }}" readonly>
+            </div>
 
-<title>Welcome</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-{% endblock %}
+            <!-- Calculator buttons are laid out in a grid -->
+            <div class="buttons-grid">
+                <!-- Row 1 -->
+                <input type="button" value="C" class="button operator" onclick="clearDisplay()">
+                <input type="button" value="(" class="button operator" onclick="appendToDisplay('(')">
+                <input type="button" value=")" class="button operator" onclick="appendToDisplay(')')">
+                <input type="button" value="/" class="button operator" onclick="appendToDisplay('/')">
 
-{% block body %}
-<div class="content">
-    <h1 style="text-align: center">Hello Adesh This side</h1>
+                <!-- Row 2 -->
+                <input type="button" value="7" class="button" onclick="appendToDisplay('7')">
+                <input type="button" value="8" class="button" onclick="appendToDisplay('8')">
+                <input type="button" value="9" class="button" onclick="appendToDisplay('9')">
+                <input type="button" value="*" class="button operator" onclick="appendToDisplay('*')">
 
-</div>
-{% endblock %}
+                <!-- Row 3 -->
+                <input type="button" value="4" class="button" onclick="appendToDisplay('4')">
+                <input type="button" value="5" class="button" onclick="appendToDisplay('5')">
+                <input type="button" value="6" class="button" onclick="appendToDisplay('6')">
+                <input type="button" value="-" class="button operator" onclick="appendToDisplay('-')">
+
+                <!-- Row 4 -->
+                <input type="button" value="1" class="button" onclick="appendToDisplay('1')">
+                <input type="button" value="2" class="button" onclick="appendToDisplay('2')">
+                <input type="button" value="3" class="button" onclick="appendToDisplay('3')">
+                <input type="button" value="+" class="button operator" onclick="appendToDisplay('+')">
+
+                <!-- Row 5 -->
+                <input type="button" value="0" class="button" onclick="appendToDisplay('0')">
+                <input type="button" value="." class="button" onclick="appendToDisplay('.')">
+                <!-- The equals button submits the form -->
+                <input type="submit" value="=" class="button equals">
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript for button functionality -->
+    <script>
+        // Appends the clicked button's value to the display
+        function appendToDisplay(value) {
+            const display = document.forms['calculator']['display'];
+            // If display shows a result or error, clear it before adding new input
+            if (display.value === "{{ result }}" || display.value === "{{ error }}") {
+                display.value = '';
+            }
+            display.value += value;
+        }
+
+        // Clears the display
+        function clearDisplay() {
+            document.forms['calculator']['display'].value = '';
+            document.getElementById('expression-display').innerText = '';
+        }
+    </script>
+</body>
+</html>

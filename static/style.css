@@ -1,0 +1,115 @@
+/* static/style.css */
+/* This file contains all the styles for the calculator's appearance. */
+
+/* Basic body styling */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Light gray background */
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+/* Wrapper for the entire calculator to center it and add a shadow */
+.calculator-wrapper {
+    width: 100%;
+    max-width: 380px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* Container for the display screens */
+.display-container {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: right;
+    border: 1px solid #e9ecef;
+}
+
+/* Small display for the full expression */
+#expression-display {
+    min-height: 24px;
+    font-size: 16px;
+    color: #6c757d; /* Muted gray color */
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+
+/* Main display for input and result */
+#display {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    font-size: 48px;
+    font-weight: 500;
+    text-align: right;
+    color: #212529;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none; /* Removes the focus outline */
+}
+
+/* Grid layout for all buttons */
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px; /* Space between buttons */
+}
+
+/* General styling for all buttons */
+.button {
+    border: none;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 500;
+    height: 65px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: #e9ecef;
+    color: #343a40;
+}
+
+.button:hover {
+    background-color: #dee2e6;
+}
+
+.button:active {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+    transform: translateY(1px);
+}
+
+/* Specific styling for operator buttons */
+.button.operator {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.button.operator:hover {
+    background-color: #e2e6ea;
+}
+
+/* Specific styling for the equals button */
+.button.equals {
+    grid-column: span 2; /* Makes the equals button wider */
+    background-color: #007bff; /* Blue background */
+    color: #ffffff; /* White text */
+}
+
+.button.equals:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
