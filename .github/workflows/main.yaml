@@ -63,37 +63,73 @@ jobs:
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           
           
-  Continuous-Deployment:
-    needs: build-and-push-ecr-image
-    runs-on: self-hosted #this is our runner which we created on the github and 
-                         # connected to our ec2 instance before this github using its own runner
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # Continuous-Deployment:
+  #   needs: build-and-push-ecr-image
+  #   runs-on: self-hosted #this is our runner which we created on the github and 
+  #                        # connected to our ec2 instance before this github using its own runner
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1
       
       
-      - name: Pull latest images
-        run: |
-         docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+  #     - name: Pull latest images
+  #       run: |
+  #        docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
          
-      # - name: Stop and remove container if running
-      #   run: |
-      #    docker ps -q --filter "name=simpleapp" | grep -q . && docker stop simpleapp && docker rm -fv simpleapp
+  #     # - name: Stop and remove container if running
+  #     #   run: |
+  #     #    docker ps -q --filter "name=simpleapp" | grep -q . && docker stop simpleapp && docker rm -fv simpleapp
        
-      - name: Run Docker Image to serve users
-        run: |
-         docker run -d -p 8080:8080 --name=simpleapp -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-      - name: Clean previous images and containers
-        run: |
-         docker system prune -f
+  #     - name: Run Docker Image to serve users
+  #       run: |
+  #        docker run -d -p 8080:8080 --name=simpleapp -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+  #     - name: Clean previous images and containers
+  #       run: |
+  #        docker system prune -f
+
+  Continuous-Deployment:
+  needs: build-and-push-ecr-image
+  runs-on: self-hosted
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      
+    - name: Pull latest image from ECR
+      run: |
+        docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+        
+    # --- THIS IS THE KEY CHANGE ---
+    # This step now ensures the old container is gone before starting a new one.
+    - name: Stop and remove existing container
+      run: |
+        docker rm -f simpleapp || true
+        
+    - name: Run Docker Image to serve users
+      run: |
+        docker run -d -p 8080:8080 --name=simpleapp -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+
+    - name: Clean up old images
+      run: |
+        docker image prune -f
